@@ -32,6 +32,14 @@
             "scripts": []
           },
           "configurations": {
+            "de-CH": {
+              "aot": true,
+              "outputPath": "dist/star-wars-fan-app-de-CH",
+              "i18nFile": "src/locale/messages.de-CH.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "de-CH",
+              "i18nMissingTranslation": "error"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -64,6 +72,9 @@
             "browserTarget": "star-wars-fan-app:build"
           },
           "configurations": {
+            "de-CH": {
+              "browserTarget": "star-wars-fan-app:build:de-CH"
+            },
             "production": {
               "browserTarget": "star-wars-fan-app:build:production"
             }

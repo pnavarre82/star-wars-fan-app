@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="de-CH" datatype="plaintext" original="ng2.template">
+    <body>
+    <trans-unit id="appName" datatype="html">
+      <source>Star Wars Fan App</source>
+      <target>Star Wars Fan App</target>
+    </trans-unit>
+    <trans-unit id="developerName" datatype="html">
+      <source>Pedro Andres</source>
+      <target>Pedro Andres</target>
+    </trans-unit>
+    <trans-unit id="challengeFooter" datatype="html">
+      <source>Web-App Developer Challenge</source>
+      <target>Web-App-Entwickler-Herausforderung</target>
+    </trans-unit>
+    </body>
+  </file>
+</xliff>
