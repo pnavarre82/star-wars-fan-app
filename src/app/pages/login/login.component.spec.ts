@@ -18,7 +18,7 @@ import { delay } from 'rxjs/operators';
 import { LoginResponseEnum } from 'src/app/services/auth/enums/login-response.enum';
 import * as faker from 'faker';
 import { Router } from '@angular/router';
-import { RoutesPaths } from 'src/app/app-routing.module';
+import { RoutesPaths } from 'src/app/app-routing-paths.class';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;

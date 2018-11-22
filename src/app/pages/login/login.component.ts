@@ -3,7 +3,7 @@ import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth/authservice.service';
 import { LoginResponseEnum } from 'src/app/services/auth/enums/login-response.enum';
 import { Router } from '@angular/router';
-import { RoutesPaths } from 'src/app/app-routing.module';
+import { RoutesPaths } from 'src/app/app-routing-paths.class';
 
 /**
  * Entry component for the app
