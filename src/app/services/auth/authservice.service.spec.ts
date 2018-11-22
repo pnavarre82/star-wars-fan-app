@@ -15,26 +15,58 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return LoginResponseEnum.OK if correct username/password', fakeAsync(() => {
-    const service: AuthService = TestBed.get(AuthService);
-    service
-      .login({
+  describe('login method', () => {
+    it('should return LoginResponseEnum.OK if correct username/password', fakeAsync(() => {
+      const service: AuthService = TestBed.get(AuthService);
+      service
+        .login({
+          userName: AuthService.Username,
+          password: AuthService.Password
+        })
+        .subscribe(result => {
+          expect(result).toEqual(LoginResponseEnum.OK);
+        });
+      tick(AuthService.MaxTimeMs);
+    }));
+
+    it('should return LoginResponseEnum.WrongUserPass if correct username/password', fakeAsync(() => {
+      const service: AuthService = TestBed.get(AuthService);
+      service.login(getFakeLoginModel()).subscribe(result => {
+        expect(result).toEqual(LoginResponseEnum.WrongUserPass);
+      });
+      tick(AuthService.MaxTimeMs);
+    }));
+  });
+
+  describe('isLogged method', () => {
+    it('should return false if never logged in', fakeAsync(() => {
+      const service: AuthService = TestBed.get(AuthService);
+      service.isLogged().subscribe(result => {
+        expect(result).toBeFalsy();
+      });
+    }));
+
+    it('should return false after wrong login', fakeAsync(() => {
+      const service: AuthService = TestBed.get(AuthService);
+      service.login(getFakeLoginModel());
+      tick();
+      service.isLogged().subscribe(result => {
+        expect(result).toBeFalsy();
+      });
+    }));
+
+    it('should return true after correct login', fakeAsync(() => {
+      const service: AuthService = TestBed.get(AuthService);
+      service.login({
         userName: AuthService.Username,
         password: AuthService.Password
-      })
-      .subscribe(result => {
-        expect(result).toEqual(LoginResponseEnum.OK);
       });
-    tick(AuthService.MaxTimeMs);
-  }));
-
-  it('should return LoginResponseEnum.WrongUserPass if correct username/password', fakeAsync(() => {
-    const service: AuthService = TestBed.get(AuthService);
-    service.login(getFakeLoginModel()).subscribe(result => {
-      expect(result).toEqual(LoginResponseEnum.WrongUserPass);
-    });
-    tick(AuthService.MaxTimeMs);
-  }));
+      tick();
+      service.isLogged().subscribe(result => {
+        expect(result).toBeTruthy();
+      });
+    }));
+  });
 });
 
 /**
@@ -45,5 +77,8 @@ export class MockAuthService {
   constructor() {}
   login(data: LoginModel): Observable<LoginResponseEnum> {
     return of(LoginResponseEnum.OK);
+  }
+  isLogged(): Observable<boolean> {
+    return of(true);
   }
 }
