@@ -219,7 +219,7 @@ describe('LoginComponent', () => {
       setLoginValues();
       submit();
       expect(mockRouterService.navigate).toHaveBeenCalledWith([
-        RoutesPaths.List
+        '/' + RoutesPaths.List
       ]);
     }
   ));

@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
         .subscribe(result => {
           switch (result) {
             case LoginResponseEnum.OK:
-              this.router.navigate([RoutesPaths.List]);
+              this.router.navigate(['/' + RoutesPaths.List]);
               break;
             case LoginResponseEnum.WrongUserPass:
               this.submitted = false;
