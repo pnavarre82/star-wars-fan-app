@@ -1,0 +1,50 @@
+.loading-cloak {
+    background: black;
+    opacity: 0.75;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+// https://codepen.io/christopherkade/pen/rJVPjz from
+// Star Wars Opening Crawl (HTML/CSS/JS)
+// A PEN BY Christopher Kade
+#content {
+    animation: scroll linear 36s;
+    position: absolute;
+    top: 100%;
+}
+
+#content {
+    animation: scroll linear 36s;
+    position: absolute;
+    top: 100%;
+}
+
+#board {
+    font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+    transform: perspective(300px) rotateX(25deg);
+    transform-origin: 50% 100%;
+    text-align: justify;
+    position: absolute;
+    margin-left: -9em;
+    font-weight: bold;
+    overflow: hidden;
+    font-size: 350%;
+    height: 50em;
+    width: 18em;
+    bottom: 0;
+    left: 50%;
+}
+
+@keyframes scroll {
+    0% {
+        top: 100%;
+    }
+    100% {
+        top: -170%;
+    }
+}

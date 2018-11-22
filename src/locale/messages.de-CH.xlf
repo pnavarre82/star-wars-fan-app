@@ -2,18 +2,71 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="de-CH" datatype="plaintext" original="ng2.template">
     <body>
-    <trans-unit id="appName" datatype="html">
-      <source>Star Wars Fan App</source>
-      <target>Star Wars Fan App</target>
-    </trans-unit>
-    <trans-unit id="developerName" datatype="html">
-      <source>Pedro Andres</source>
-      <target>Pedro Andres</target>
-    </trans-unit>
-    <trans-unit id="challengeFooter" datatype="html">
-      <source>Web-App Developer Challenge</source>
-      <target>Web-App-Entwickler-Herausforderung</target>
-    </trans-unit>
+      <trans-unit id="appName" datatype="html">
+        <source>Star Wars Fan App</source>
+        <target>Star Wars Fan App</target>
+      </trans-unit>
+      <trans-unit id="developerName" datatype="html">
+        <source>Designed and built by Pedro Andres</source>
+        <target>Designed and built by Pedro Andres</target>
+      </trans-unit>
+      <trans-unit id="challengeFooter" datatype="html">
+        <source>Web-App Developer Challenge</source>
+        <target>Web-App-Entwickler-Herausforderung</target>
+      </trans-unit>
+
+      <trans-unit id="userTip" datatype="html">
+        <source>User:star Password:wars</source>
+        <target>User:star Password:wars</target>
+      </trans-unit>
+
+      <trans-unit id="usernameLabel" datatype="html">
+        <source>User</source>
+        <target>User</target>
+      </trans-unit>
+      <trans-unit id="usernamePlaceholder" datatype="html">
+        <source>Username / Email</source>
+        <target>Username / Email</target>
+      </trans-unit>
+      <trans-unit id="usernameRequired" datatype="html">
+        <source>Username required</source>
+        <target>Username required</target>
+      </trans-unit>
+      <trans-unit id="wrongUserPass" datatype="html">
+        <source>Password or Username incorrect</source>
+        <target>Password or Username incorrect</target>
+      </trans-unit>
+
+      <trans-unit id="passwordLabel" datatype="html">
+        <source>Password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="passswordPlaceholder" datatype="html">
+        <source>Password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="passwordRequired" datatype="html">
+        <source>Password required</source>
+        <target>Password required</target>
+      </trans-unit>
+
+      <trans-unit id="loginButton" datatype="html">
+        <source>Login</source>
+        <target>Login</target>
+      </trans-unit>
+      
+      <trans-unit id="loadingTitle" datatype="html">
+        <source>Episode I</source>
+        <target>Episode I</target>
+      </trans-unit>
+      <trans-unit id="loadingSubTitle" datatype="html">
+        <source>Login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="loadingIntro" datatype="html">
+        <source>There is random timer (4'-6') to simulate the delay introduced by the auth service</source>
+        <target>There is random timer (4'-6') to simulate the delay introduced by the auth service</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

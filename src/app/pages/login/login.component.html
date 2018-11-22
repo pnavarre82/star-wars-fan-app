@@ -1,0 +1,34 @@
+<main class="mx-auto col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 bd-content" role="main">
+  <form (ngSubmit)="login()" [ngClass]="{'was-validated': submitted }">
+    <small i18n="@@userTip">User:star Password:wars</small>
+    <div class="form-group row">
+      <label for="username" i18n="@@usernameLabel">User</label>
+      <!-- class is-invalid added to display validation when pseudo :invalid not present   -->
+      <input [formControl]="usernameControl" [ngClass]="{'is-invalid': wrongUserPass}" #username id="username" type="text" class="form-control" i18n-placeholder="@@usernamePlaceholder" placeholder="Username / Email" required />
+      <div *ngIf="submitted && usernameControl.errors?.required" name="usernameRequiredFeedback" class="invalid-feedback" i18n="@@usernameRequired">Username required</div>
+      <div *ngIf="wrongUserPass" name="wrongUserPassFeedback" class="invalid-feedback" i18n="@@wrongUserPass">Password or Username incorrect</div>
+    </div>
+    <div class="form-group row">
+      <label for="password" i18n="@@passwordLabel">Password</label>
+      <!-- class is-invalid added to display validation when pseudo :invalid not present   -->
+      <input [formControl]="passwordControl" [ngClass]="{'is-invalid': wrongUserPass}" id="password" type="password" class="form-control" i18n-placeholder="@@passswordPlaceholder" placeholder="Password" required />
+      <div *ngIf="submitted && passwordControl.errors?.required" name="passwordRequiredFeedback" class="invalid-feedback" i18n="@@passwordRequired">Password required</div>
+    </div>
+    <button type="submit" class="btn btn-primary" i18n="@@loginButton">Login</button>
+  </form>
+  <div class="loading-cloak" *ngIf="loading">
+    <!-- Extracted from 
+            https://codepen.io/christopherkade/pen/rJVPjz from
+            Star Wars Opening Crawl (HTML/CSS/JS)
+            A PEN BY Christopher Kade
+          -->
+    <div id="board">
+      <div id="content">
+        <p id="title" i18n="@@loadingTitle">Episode I</p>
+        <p id="subtitle" i18n="@@loadingSubTitle">Login</p>
+        <br>
+        <p i18n="@@loadingIntro">There is random timer (4'-6') to simulate the delay introduced by the auth service</p>
+      </div>
+    </div>
+  </div>
+</main>
