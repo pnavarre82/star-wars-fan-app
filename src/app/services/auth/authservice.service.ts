@@ -18,6 +18,8 @@ export class AuthService {
   static Password: string = 'wars';
   static MinTimeMs: number = 4000;
   static MaxTimeMs: number = 6000;
+  // in futher features will be stored in localStorageService
+  private static isLogged: boolean = false;
 
   constructor() {}
   /**
@@ -32,10 +34,18 @@ export class AuthService {
         Math.random() * (AuthService.MaxTimeMs - AuthService.MinTimeMs)
       ) + AuthService.MinTimeMs;
 
-    return loginModel &&
+    AuthService.isLogged =
+      loginModel &&
       loginModel.userName === AuthService.Username &&
-      loginModel.password === AuthService.Password
+      loginModel.password === AuthService.Password;
+
+    return AuthService.isLogged
       ? of(LoginResponseEnum.OK).pipe(delay(delayTimeMs))
       : of(LoginResponseEnum.WrongUserPass).pipe(delay(delayTimeMs));
+  }
+
+  // observable because should be returned from server
+  isLogged(): Observable<boolean> {
+    return of(AuthService.isLogged);
   }
 }
