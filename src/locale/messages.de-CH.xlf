@@ -101,6 +101,15 @@
         <source>Vehicle</source>
         <target>Vehicle</target>
       </trans-unit>
+
+      <trans-unit id="filter" datatype="html">
+        <source>Filter</source>
+        <target>Filter</target>
+      </trans-unit>
+      <trans-unit id="filterShowAll" datatype="html">
+        <source>- Show all -</source>
+        <target>- Show all -</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

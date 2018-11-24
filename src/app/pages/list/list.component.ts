@@ -7,7 +7,9 @@ import { ItemInterface } from './models/item.interface';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
+  Resources = SwapiFetcherService.Resources; // exposed to the view
   items: ItemInterface[] = [];
+  filterType: string = '';
 
   constructor(private swapiFetcherService: SwapiFetcherService) {}
 
@@ -19,5 +21,15 @@ export class ListComponent implements OnInit {
       });
       this.items.push(...newItems);
     });
+  }
+
+  get filteredItems(): ItemInterface[] {
+    let filteredItems: ItemInterface[];
+    if (this.filterType) {
+      filteredItems = this.items.filter(item => item.type === this.filterType);
+    } else {
+      filteredItems = this.items.concat([]);
+    }
+    return filteredItems;
   }
 }

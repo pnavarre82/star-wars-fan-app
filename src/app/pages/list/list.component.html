@@ -1,3 +1,14 @@
+<form class="form-inline">
+  <div class="form-group">
+    <label i18n="@@filter" for="filter">Filter:</label>
+    <select class="form-control" name="filter" id="filter" [(ngModel)]="filterType">
+      <option value="" i18n="@@filterShowAll"> - Show All - </option>
+      <option *ngFor="let type of Resources" [value]="type">
+        <app-type [type]="type"></app-type>
+      </option>
+    </select>
+  </div>
+</form>
 <table class="table">
   <thead>
     <tr>
@@ -6,9 +17,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of items">
+    <tr *ngFor="let item of filteredItems">
       <td scope="row" name="type">
-        <app-type [type]="item.type">{{item.type}}</app-type>
+        <app-type [type]="item.type"></app-type>
       </td>
       <td scope="row" name="name">{{item.name}}</td>
     </tr>

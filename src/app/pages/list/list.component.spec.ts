@@ -6,6 +6,8 @@ import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetche
 import { ItemInterface } from './models/item.interface';
 import { By } from '@angular/platform-browser';
 import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
+import { ItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface';
+import { FormsModule } from '@angular/forms';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -20,7 +22,8 @@ describe('ListComponent', () => {
           provide: SwapiFetcherService,
           useClass: MockSwapiFetcherService
         }
-      ]
+      ],
+      imports: [FormsModule]
     }).compileComponents();
   }));
 
@@ -45,15 +48,27 @@ describe('ListComponent', () => {
       // make next object appear in the subscription
       tick(MockSwapiFetcherService.DelayMs);
 
-      const newItems = recentlyFetchedElemet.results.map(item => {
-        item.type = recentlyFetchedElemet.type;
-        return item;
-      });
+      const newItems = mapElements(recentlyFetchedElemet);
       expectedPresentedItems.push(...newItems);
       expectCorrectItems(expectedPresentedItems);
     }
   }));
 
+  it('should filter as expected when filterSelect changes', fakeAsync(() => {
+    fixture.detectChanges();
+    // wait to fetch all responses
+    tick(MockSwapiFetcherService.DelayMs * mockSwapiFetcherService.returnedResponses.length);
+    const allItems: ItemInterface[] = [].concat(...mockSwapiFetcherService.returnedResponses.map(mapElements));
+
+    expectSetFilter('', allItems);
+    SwapiFetcherService.Resources.forEach(resource => {
+      const filteredElements = allItems.filter(item => item.type === resource);
+      expectSetFilter(resource, filteredElements);
+    });
+    expectSetFilter('', allItems);
+  }));
+
+  // iterate over every tbody tr in the component and test name and type from expectedPresentedItems
   function expectCorrectItems(expectedPresentedItems: ItemInterface[]) {
     fixture.detectChanges();
     const everyTr = fixture.debugElement.queryAll(By.css('tbody tr'));
@@ -68,5 +83,23 @@ describe('ListComponent', () => {
       const typeElemet: HTMLElement = tr.query(By.css('[name=type]')).nativeElement;
       expect(typeElemet.innerText).toEqual(presentedItem.type);
     }
+  }
+
+  // Return elements as expected from the component
+  function mapElements(recentlyFetchedElemet: ItemsResponseInterface): ItemInterface[] {
+    return recentlyFetchedElemet.results.map(item => {
+      item.type = recentlyFetchedElemet.type;
+      return item;
+    });
+  }
+
+  // Set the filter into the select and invoke expectCorrectItems with received items
+  function expectSetFilter(type: string, expectedFilteredItems: ItemInterface[]) {
+    const selectControl = fixture.debugElement.query(By.css('select[name=filter]'));
+    const selectElemet: HTMLSelectElement = selectControl.nativeElement;
+    selectElemet.value = type;
+    selectElemet.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expectCorrectItems(expectedFilteredItems);
   }
 });
