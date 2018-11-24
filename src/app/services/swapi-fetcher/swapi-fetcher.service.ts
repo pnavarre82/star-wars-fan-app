@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
 import { ItemsResponseInterface } from './models/items-response.interface';
 import { ListResponseInterface } from './models/list-response.interface';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 /**
  * Swapi Fetcher Service
@@ -31,7 +32,7 @@ export class SwapiFetcherService {
     SwapiFetcherService.StarshipsPath,
     SwapiFetcherService.VehiclesPath
   ];
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private localStorageService: LocalStorageService) {}
 
   /**
    * Iterate over all the List pages in https://swapi.co/api/
@@ -64,37 +65,64 @@ export class SwapiFetcherService {
     returnedObserver: Observer<ItemsResponseInterface>,
     unFinishedResources: string[]
   ) {
-    this.httpClient.get(url).subscribe(
-      // process each list result from swapi
-      (jsonSwapiResult: ListResponseInterface) => {
-        returnedObserver.next({
-          type: resource,
-          results: jsonSwapiResult.results
-        });
-        if (jsonSwapiResult.next) {
-          this.fecthResourcePage(jsonSwapiResult.next, resource, returnedObserver, unFinishedResources);
-        } else {
-          // there is any remaing page for this resource, so removed from the list
+    const cacheResult: ListResponseInterface = this.localStorageService.getItem(url);
+    if (cacheResult) {
+      // if exists on cache avoid make the request again and uses request instead
+      this.proccessResponse(returnedObserver, resource, cacheResult, unFinishedResources);
+    } else {
+      this.httpClient.get(url).subscribe(
+        // process each list result from swapi
+        (jsonSwapiResult: ListResponseInterface) => {
+          // set result from SWAPI into cache
+          this.localStorageService.setItem(url, jsonSwapiResult);
+
+          this.proccessResponse(returnedObserver, resource, jsonSwapiResult, unFinishedResources);
+        },
+        // process errors from swapi api
+        error => {
+          // resend error to subscriber
           const indexUnFinishedResources = unFinishedResources.indexOf(resource);
           unFinishedResources.splice(indexUnFinishedResources, 1);
-          // last resource hasn't any remaining page
+          returnedObserver.error(error);
+
+          // last resource throws error observable completed
           if (unFinishedResources.length === 0) {
             returnedObserver.complete();
           }
         }
-      },
-      // process errors from swapi api
-      error => {
-        // resend error to subscriber
-        const indexUnFinishedResources = unFinishedResources.indexOf(resource);
-        unFinishedResources.splice(indexUnFinishedResources, 1);
-        returnedObserver.error(error);
+      );
+    }
+  }
 
-        // last resource throws error observable completed
-        if (unFinishedResources.length === 0) {
-          returnedObserver.complete();
-        }
+  private proccessResponse(
+    returnedObserver: Observer<ItemsResponseInterface>,
+    resource: string,
+    jsonSwapiResult: ListResponseInterface,
+    unFinishedResources: string[]
+  ) {
+    returnedObserver.next({
+      type: resource,
+      results: jsonSwapiResult.results
+    });
+    this.continueOrComplete(jsonSwapiResult, resource, returnedObserver, unFinishedResources);
+  }
+
+  private continueOrComplete(
+    jsonSwapiResult: ListResponseInterface,
+    resource: string,
+    returnedObserver: Observer<ItemsResponseInterface>,
+    unFinishedResources: string[]
+  ) {
+    if (jsonSwapiResult.next) {
+      this.fecthResourcePage(jsonSwapiResult.next, resource, returnedObserver, unFinishedResources);
+    } else {
+      // there is any remaing page for this resource, so removed from the list
+      const indexUnFinishedResources = unFinishedResources.indexOf(resource);
+      unFinishedResources.splice(indexUnFinishedResources, 1);
+      // last resource hasn't any remaining page
+      if (unFinishedResources.length === 0) {
+        returnedObserver.complete();
       }
-    );
+    }
   }
 }
