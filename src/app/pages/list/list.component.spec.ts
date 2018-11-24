@@ -12,8 +12,13 @@ import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
 import * as fuzzaldrinPlus from 'fuzzaldrin-plus';
+import { Router } from '@angular/router';
 
 describe('ListComponent', () => {
+  class MockRouterService {
+    navigate() {}
+  }
+
   let component: ListComponent;
   let fixture: ComponentFixture<ListComponent>;
   let mockSwapiFetcherService: MockSwapiFetcherService;
@@ -25,6 +30,10 @@ describe('ListComponent', () => {
         {
           provide: SwapiFetcherService,
           useClass: MockSwapiFetcherService
+        },
+        {
+          provide: Router,
+          useClass: MockRouterService
         }
       ],
       imports: [FormsModule]
@@ -181,6 +190,30 @@ describe('ListComponent', () => {
     tick();
 
     expectSetSearch(occurrence, [mockedResponse.results[1], mockedResponse.results[0]]);
+  }));
+
+  it('should navigate to resource/:id route on click tr tbody', fakeAsync(() => {
+    const mockRouter: MockRouterService = TestBed.get(Router);
+    spyOn(mockRouter, 'navigate');
+
+    const mockedResponse = getMockItemsResponseInterface();
+    mockedResponse.results.length = 1;
+    const clickedItem = mockedResponse.results[0];
+    const id: string = faker.random.number().toString();
+    // every swapi object has its own url like https://swapi.co/api/people/1/
+    clickedItem.url = `https://swapi.co/api/${clickedItem.type}/${id}/`;
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(of(mockedResponse));
+
+    fixture.detectChanges();
+    // wait to fetch all responses
+    tick();
+
+    const trControl = fixture.debugElement.query(By.css('tbody tr'));
+    const trElement: HTMLTableHeaderCellElement = trControl.nativeElement;
+    trElement.dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith([`/${clickedItem.type}/${id}`]);
   }));
 
   // Return elements as expected from the component

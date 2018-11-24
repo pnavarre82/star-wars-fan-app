@@ -102,7 +102,10 @@ export class ListComponent implements OnInit {
     return false;
   }
 
-  navigateToDetail() {
-    this.router.navigate(['/people/1']);
+  // genearate url like /people/1
+  navigateToDetail(item) {
+    const splitUrl = item.url.split('/').filter(urlPart => urlPart !== ''); // filter remove last empty part
+    const id = splitUrl[splitUrl.length - 1];
+    this.router.navigate([`/${item.type}/${id}`]);
   }
 }
