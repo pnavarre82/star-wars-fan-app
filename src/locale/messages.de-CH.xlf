@@ -73,8 +73,8 @@
         <target>Title</target>
       </trans-unit>
       <trans-unit id="tableNameTitle" datatype="html">
-        <source>Name</source>
-        <target>Name</target>
+        <source>Name / Title</source>
+        <target>Name / Title</target>
       </trans-unit>
 
       <trans-unit id="typeFilm" datatype="html">

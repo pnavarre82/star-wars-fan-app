@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import * as faker from 'faker';
 
 import { ListComponent } from './list.component';
 import { MockSwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service.spec';
@@ -8,6 +9,8 @@ import { By } from '@angular/platform-browser';
 import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
 import { ItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface';
 import { FormsModule } from '@angular/forms';
+import { of } from 'rxjs';
+import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -66,6 +69,22 @@ describe('ListComponent', () => {
       expectSetFilter(resource, filteredElements);
     });
     expectSetFilter('', allItems);
+  }));
+
+  it('should set name with title if name not present', fakeAsync(() => {
+    const mockedResponse = getMockItemsResponseInterface();
+    mockedResponse.results.length = 1;
+    delete mockedResponse.results[0].name;
+    mockedResponse.results[0].title = faker.random.word();
+    const expectedItems: ItemInterface[] = JSON.parse(JSON.stringify(mapElements(mockedResponse)));
+    // expected set name on the title
+    expectedItems[0].name = (expectedItems[0] as any).title;
+
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(of(mockedResponse));
+    fixture.detectChanges();
+    // wait to fetch mock responses
+    tick();
+    expectCorrectItems(expectedItems);
   }));
 
   // iterate over every tbody tr in the component and test name and type from expectedPresentedItems

@@ -7,7 +7,6 @@ import { SwapiFetcherService } from '../swapi-fetcher.service';
  *
  * returns mock interface of @interface ItemsResponseInterface
  */
-
 export function getMockItemsResponseInterface(): ItemsResponseInterface {
   const results: any = [];
   const resultsLenght: number = faker.random.number({ min: 5, max: 10 });
