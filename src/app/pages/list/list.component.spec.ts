@@ -9,8 +9,9 @@ import { By } from '@angular/platform-browser';
 import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
 import { ItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface';
 import { FormsModule } from '@angular/forms';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
+import { DebugElement } from '@angular/core';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -85,6 +86,29 @@ describe('ListComponent', () => {
     // wait to fetch mock responses
     tick();
     expectCorrectItems(expectedItems);
+  }));
+
+  it('should show loading icon during loading and loaded icon when completed', fakeAsync(() => {
+    fixture.detectChanges();
+    const responsesLength = mockSwapiFetcherService.returnedResponses.length;
+    for (let i = 0; i < responsesLength; i++) {
+      const loadingIcon = fixture.debugElement.query(By.css('.loading'));
+      expect(loadingIcon).not.toBeNull();
+      // make next object appear in the subscription
+      tick(MockSwapiFetcherService.DelayMs);
+      fixture.detectChanges();
+    }
+    const loadedIcon = fixture.debugElement.query(By.css('.loaded'));
+    expect(loadedIcon).not.toBeNull();
+  }));
+
+  it('should show error icon if get getAllItems send any loading-error', fakeAsync(() => {
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(throwError('mock error'));
+    fixture.detectChanges();
+    tick();
+
+    const loadingErrorIcon = fixture.debugElement.query(By.css('.loading-error'));
+    expect(loadingErrorIcon).not.toBeNull();
   }));
 
   // iterate over every tbody tr in the component and test name and type from expectedPresentedItems

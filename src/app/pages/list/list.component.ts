@@ -10,19 +10,30 @@ export class ListComponent implements OnInit {
   Resources = SwapiFetcherService.Resources; // exposed to the view
   items: ItemInterface[] = [];
   filterType: string = '';
+  status: 'loading' | 'loaded' | 'loading-error' = 'loading';
 
   constructor(private swapiFetcherService: SwapiFetcherService) {}
 
   ngOnInit() {
-    this.swapiFetcherService.getAllItems().subscribe(itemsResponse => {
-      const newItems = itemsResponse.results.map(item => {
-        item.type = itemsResponse.type;
-        // Name / Title not present in films added title
-        item.name = item.name || item.title;
-        return item;
-      });
-      this.items.push(...newItems);
-    });
+    this.swapiFetcherService.getAllItems().subscribe(
+      itemsResponse => {
+        const newItems = itemsResponse.results.map(item => {
+          item.type = itemsResponse.type;
+          // Name / Title not present in films added title
+          item.name = item.name || item.title;
+          return item;
+        });
+        this.items.push(...newItems);
+      },
+      // error reported
+      () => {
+        this.status = 'loading-error';
+      },
+      // all items loaded
+      () => {
+        this.status = 'loaded';
+      }
+    );
   }
 
   get filteredItems(): ItemInterface[] {
