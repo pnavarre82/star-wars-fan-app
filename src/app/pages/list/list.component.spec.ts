@@ -11,7 +11,6 @@ import { ItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/it
 import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
-import { DebugElement } from '@angular/core';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -128,6 +127,27 @@ describe('ListComponent', () => {
     }
   }
 
+  it('should filter as expected when search changes', fakeAsync(() => {
+    const firstPrefix = 'object first prefix';
+    const secondPrefix = 'object second prefix';
+    const mockedResponse = getMockItemsResponseInterface();
+    mockedResponse.results.length = 2;
+    // added a prefix to all object properties to avoid collisions on random object
+    addPrefixToAllProperty(firstPrefix, mockedResponse.results[0]);
+    addPrefixToAllProperty(secondPrefix, mockedResponse.results[1]);
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(of(mockedResponse));
+
+    fixture.detectChanges();
+    // wait to fetch all responses
+    tick();
+    const allItems: ItemInterface[] = [].concat(mockedResponse.results);
+
+    expectSetSearch('', allItems);
+    expectSetSearch('this string doesn‘t exists in any object', []);
+    expectSetSearch(firstPrefix.toUpperCase(), [mockedResponse.results[0]]);
+    expectSetSearch(secondPrefix.toUpperCase(), [mockedResponse.results[1]]);
+  }));
+
   // Return elements as expected from the component
   function mapElements(recentlyFetchedElemet: ItemsResponseInterface): ItemInterface[] {
     return recentlyFetchedElemet.results.map(item => {
@@ -142,6 +162,28 @@ describe('ListComponent', () => {
     const selectElemet: HTMLSelectElement = selectControl.nativeElement;
     selectElemet.value = type;
     selectElemet.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expectCorrectItems(expectedFilteredItems);
+  }
+
+  function addPrefixToAllProperty(prefix: string, objectToPrefix: object) {
+    for (const key in objectToPrefix) {
+      if (objectToPrefix.hasOwnProperty(key)) {
+        const element = objectToPrefix[key];
+        // avoid add concatenate string to dates, numbers, ...
+        if (typeof element === 'string') {
+          objectToPrefix[key] = prefix + element;
+        }
+      }
+    }
+  }
+
+  // Set the filter into the select and invoke expectCorrectItems with received items
+  function expectSetSearch(search: string, expectedFilteredItems: ItemInterface[]) {
+    const inputControl = fixture.debugElement.query(By.css('input[name=search]'));
+    const inputElemet: HTMLInputElement = inputControl.nativeElement;
+    inputElemet.value = search;
+    inputElemet.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expectCorrectItems(expectedFilteredItems);
   }
