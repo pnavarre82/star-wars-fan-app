@@ -1,0 +1,8 @@
+<ng-container [ngSwitch]="type">
+  <span *ngSwitchCase="SwapiFetcherService.FilmsPath" [attr.type]="type" i18n="@@typeFilm">Film</span>
+  <span *ngSwitchCase="SwapiFetcherService.PeoplePath" [attr.type]="type" i18n="@@typePeople">People</span>
+  <span *ngSwitchCase="SwapiFetcherService.PlanetsPath" [attr.type]="type" i18n="@@typePlanet">Planet</span>
+  <span *ngSwitchCase="SwapiFetcherService.SpeciesPath" [attr.type]="type" i18n="@@typeSpecie">Specie</span>
+  <span *ngSwitchCase="SwapiFetcherService.StarshipsPath" [attr.type]="type" i18n="@@typeStarship">Starship</span>
+  <span *ngSwitchCase="SwapiFetcherService.VehiclesPath" [attr.type]="type" i18n="@@typeVehicle">Vehicle</span>
+</ng-container>

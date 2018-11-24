@@ -5,6 +5,7 @@ import { MockSwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fe
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
 import { ItemInterface } from './models/item.interface';
 import { By } from '@angular/platform-browser';
+import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -13,7 +14,7 @@ describe('ListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ListComponent],
+      declarations: [ListComponent, MockTypeComponent],
       providers: [
         {
           provide: SwapiFetcherService,

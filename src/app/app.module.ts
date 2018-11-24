@@ -7,9 +7,10 @@ import { LoginComponent } from './pages/login/login.component';
 import { ListComponent } from './pages/list/list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { TypeComponent } from './components/type/type.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, ListComponent],
+  declarations: [AppComponent, LoginComponent, ListComponent, TypeComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

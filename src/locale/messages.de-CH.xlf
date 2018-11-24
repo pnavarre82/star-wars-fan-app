@@ -76,6 +76,31 @@
         <source>Name</source>
         <target>Name</target>
       </trans-unit>
+
+      <trans-unit id="typeFilm" datatype="html">
+        <source>Film</source>
+        <target>Film</target>
+      </trans-unit>
+      <trans-unit id="typePeople" datatype="html">
+        <source>People</source>
+        <target>People</target>
+      </trans-unit>
+      <trans-unit id="typePlanet" datatype="html">
+        <source>Planet</source>
+        <target>Planet</target>
+      </trans-unit>
+      <trans-unit id="typeSpecie" datatype="html">
+        <source>Specie</source>
+        <target>Specie</target>
+      </trans-unit>
+      <trans-unit id="typeStarship" datatype="html">
+        <source>Starship</source>
+        <target>Starship</target>
+      </trans-unit>
+      <trans-unit id="typeVehicle" datatype="html">
+        <source>Vehicle</source>
+        <target>Vehicle</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
