@@ -67,6 +67,15 @@
         <source>There is random timer (4'-6') to simulate the delay introduced by the auth service</source>
         <target>There is random timer (4'-6') to simulate the delay introduced by the auth service</target>
       </trans-unit>
+
+      <trans-unit id="tableTypeTitle" datatype="html">
+        <source>Title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="tableNameTitle" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

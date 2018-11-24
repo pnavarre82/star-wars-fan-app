@@ -1,5 +1,6 @@
 import * as faker from 'faker';
 import { ItemsResponseInterface } from './items-response.interface';
+import { SwapiFetcherService } from '../swapi-fetcher.service';
 
 /**
  * get Mock List Response Interface
@@ -15,7 +16,7 @@ export function getMockItemsResponseInterface(): ItemsResponseInterface {
   }
 
   return {
-    type: faker.random.word(),
+    type: faker.random.arrayElement(SwapiFetcherService.Resources),
     results: results
   };
 }
