@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
 import { ItemInterface } from './models/item.interface';
 import * as fuzzaldrinPlus from 'fuzzaldrin-plus';
+import { Router } from '@angular/router';
 @Component({
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
@@ -19,7 +20,7 @@ export class ListComponent implements OnInit {
 
   status: 'loading' | 'loaded' | 'loading-error' = 'loading';
 
-  constructor(private swapiFetcherService: SwapiFetcherService) {}
+  constructor(private swapiFetcherService: SwapiFetcherService, private router: Router) {}
 
   ngOnInit() {
     this.swapiFetcherService.getAllItems().subscribe(
@@ -97,7 +98,11 @@ export class ListComponent implements OnInit {
       }
     }
 
-    // any property fits to needle
+    // none property fits to needle
     return false;
+  }
+
+  navigateToDetail() {
+    this.router.navigate(['/people/1']);
   }
 }

@@ -8,9 +8,10 @@ import { ListComponent } from './pages/list/list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { TypeComponent } from './components/type/type.component';
+import { DetailViewComponent } from './pages/detail-view/detail-view.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, ListComponent, TypeComponent],
+  declarations: [AppComponent, LoginComponent, ListComponent, TypeComponent, DetailViewComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -23,7 +23,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of filteredItems">
+    <tr *ngFor="let item of filteredItems" (click)="navigateToDetail(item)">
       <td scope="row" name="type">
         <app-type [type]="item.type"></app-type>
       </td>
