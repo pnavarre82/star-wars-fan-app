@@ -16,8 +16,8 @@ import { delay } from 'rxjs/operators';
 export class AuthService {
   static Username: string = 'star';
   static Password: string = 'wars';
-  static MinTimeMs: number = 4000;
-  static MaxTimeMs: number = 6000;
+  static MinTimeMs: number = 400;
+  static MaxTimeMs: number = 600;
   // in futher features will be stored in localStorageService
   private static isLogged: boolean = false;
 

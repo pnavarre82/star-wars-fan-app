@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
+import { ListComponent } from './pages/list/list.component';
+import { RoutesPaths } from './app-routing-paths.class';
 
-export class RoutesPaths {
-  static Loging: string = 'login';
-  static List: string = 'list';
-}
 const routes: Routes = [
   {
-    path: 'login',
+    path: RoutesPaths.Loging,
     component: LoginComponent
+  },
+  {
+    path: RoutesPaths.List,
+    component: ListComponent
   },
   {
     path: '**',
