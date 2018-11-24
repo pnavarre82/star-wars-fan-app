@@ -119,6 +119,8 @@ describe('SwapiFetcherService', () => {
  */
 @Injectable()
 export class MockSwapiFetcherService {
+  static DelayMs: number = 5000;
+
   // stores all returned responses to review items returned
   private _returnedResponses: ItemsResponseInterface[];
 
@@ -144,11 +146,10 @@ export class MockSwapiFetcherService {
 
   private eachGenerateMockResponse(): Observable<ItemsResponseInterface> {
     const mockResponse = of<ItemsResponseInterface>(null);
-    const randomDelay = faker.random.number({ min: 1000, max: 5000 });
     const returnedResponse = getMockItemsResponseInterface();
     this._returnedResponses.push(returnedResponse);
     return mockResponse.pipe(
-      delay(randomDelay),
+      delay(MockSwapiFetcherService.DelayMs),
       mapTo(returnedResponse)
     );
   }
