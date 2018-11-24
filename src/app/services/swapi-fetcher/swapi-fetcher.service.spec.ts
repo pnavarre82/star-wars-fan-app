@@ -6,7 +6,7 @@ import { getMockListResponseInterface } from './models/list-response.interface.s
 import { ListResponseInterface } from './models/list-response.interface';
 import { ItemsResponseInterface } from './models/items-response.interface';
 import { Injectable } from '@angular/core';
-import { Observable, of, merge } from 'rxjs';
+import { Observable, of, concat } from 'rxjs';
 import { delay, mapTo } from 'rxjs/operators';
 import { getMockItemsResponseInterface } from './models/items-response.interface.spec';
 import * as faker from 'faker';
@@ -119,24 +119,37 @@ describe('SwapiFetcherService', () => {
  */
 @Injectable()
 export class MockSwapiFetcherService {
+  // stores all returned responses to review items returned
+  private _returnedResponses: ItemsResponseInterface[];
+
+  get returnedResponses(): ItemsResponseInterface[] {
+    if (!this._returnedResponses) {
+      throw new Error('getAllItems not invoked');
+    }
+    return [].concat(this._returnedResponses);
+  }
+
   constructor() {}
 
   getAllItems(): Observable<ItemsResponseInterface> {
+    this._returnedResponses = [];
     const observables: Observable<ItemsResponseInterface>[] = [];
     const resultsLenght: number = faker.random.number({ min: 5, max: 10 });
     for (let i = 0; i < resultsLenght; i++) {
       observables.push(this.eachGenerateMockResponse());
     }
 
-    return merge(...observables);
+    return concat(...observables);
   }
 
   private eachGenerateMockResponse(): Observable<ItemsResponseInterface> {
     const mockResponse = of<ItemsResponseInterface>(null);
     const randomDelay = faker.random.number({ min: 1000, max: 5000 });
+    const returnedResponse = getMockItemsResponseInterface();
+    this._returnedResponses.push(returnedResponse);
     return mockResponse.pipe(
       delay(randomDelay),
-      mapTo(getMockItemsResponseInterface())
+      mapTo(returnedResponse)
     );
   }
 }
