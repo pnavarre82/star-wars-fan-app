@@ -7,10 +7,15 @@ import * as fuzzaldrinPlus from 'fuzzaldrin-plus';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-  Resources = SwapiFetcherService.Resources; // exposed to the view
   items: ItemInterface[] = [];
+  lastFilteredItems: ItemInterface[];
+
+  Resources = SwapiFetcherService.Resources; // exposed to the view
   filterType: string = '';
   needle: string = '';
+  previousFilterType: string;
+  previousNeedle: string;
+  previousItemLength: number;
 
   status: 'loading' | 'loaded' | 'loading-error' = 'loading';
 
@@ -39,36 +44,60 @@ export class ListComponent implements OnInit {
   }
 
   get filteredItems(): ItemInterface[] {
-    let filteredItems: ItemInterface[];
-    if (this.filterType || this.needle) {
-      // loops array once to validate each object
-      filteredItems = this.items.filter(item => {
-        const validFilter = this.filterType ? item.type === this.filterType : true;
-        let validSearch = this.needle == null || this.needle === '';
+    // only change lastFilteredItems if something has really changed
+    if (
+      this.filterType !== this.previousFilterType ||
+      this.needle !== this.previousNeedle ||
+      this.items.length !== this.previousItemLength
+    ) {
+      // sets all previous values
+      this.previousFilterType = this.filterType;
+      this.previousNeedle = this.needle;
+      this.previousItemLength = this.items.length;
+      if (this.filterType || this.needle) {
+        const isPresentNeedle = this.needle && this.needle !== '';
 
-        // needled exists filter by it
-        if (!validSearch) {
-          for (const key in item) {
-            if (item.hasOwnProperty(key)) {
-              const objectString = item[key];
-              // only compare strings
-              if (typeof objectString === 'string') {
-                validSearch = fuzzaldrinPlus.score(objectString, this.needle) > 0;
+        // loops array once to validate each object
+        this.lastFilteredItems = this.items.filter(item => {
+          const validFilter = this.filterType ? item.type === this.filterType : true;
+          const validSearch = !isPresentNeedle || this.searchObject(item);
 
-                // if element is alredy valid stops compring other properties
-                if (validSearch) {
-                  break;
-                }
-              }
+          return validFilter && validSearch;
+        });
+        if (isPresentNeedle) {
+          this.lastFilteredItems = this.lastFilteredItems.sort((itemA: any, itemB: any) => itemB._fuzzaldrinPlus - itemA._fuzzaldrinPlus);
+        }
+      } else {
+        this.lastFilteredItems = this.items.concat([]);
+      }
+    }
+    return this.lastFilteredItems;
+  }
+
+  searchObject(item: ItemInterface): boolean {
+    for (const key in item) {
+      if (item.hasOwnProperty(key)) {
+        const objectString = item[key];
+        // only compare strings
+        if (typeof objectString === 'string') {
+          let score = fuzzaldrinPlus.score(objectString, this.needle);
+
+          // if element is alredy valid stops comparing other properties
+          if (score > 0) {
+            // add extra points if occurence  appers in the name or title
+            if (key === 'name' || key === 'title') {
+              score += 1000000;
             }
+            // establish _fuzzaldrinPlus to sort by this later
+
+            (item as any)._fuzzaldrinPlus = score;
+            return true;
           }
         }
-
-        return validFilter && validSearch;
-      });
-    } else {
-      filteredItems = this.items.concat([]);
+      }
     }
-    return filteredItems;
+
+    // any property fits to needle
+    return false;
   }
 }

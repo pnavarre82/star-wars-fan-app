@@ -11,6 +11,7 @@ import { ItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/it
 import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
+import * as fuzzaldrinPlus from 'fuzzaldrin-plus';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -146,6 +147,40 @@ describe('ListComponent', () => {
     expectSetSearch('this string doesn‘t exists in any object', []);
     expectSetSearch(firstPrefix.toUpperCase(), [mockedResponse.results[0]]);
     expectSetSearch(secondPrefix.toUpperCase(), [mockedResponse.results[1]]);
+  }));
+
+  it('should sort result depending on fuzzaldrinPlus score', fakeAsync(() => {
+    const firstPrefix = 'object first prefix';
+    const secondPrefix = 'object second prefix';
+    const mockedResponse = getMockItemsResponseInterface();
+    mockedResponse.results.length = 2;
+    // added a prefix to all object properties to avoid collisions on random object
+    addPrefixToAllProperty(firstPrefix, mockedResponse.results[0]);
+    addPrefixToAllProperty(secondPrefix, mockedResponse.results[1]);
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(of(mockedResponse));
+
+    spyOn(fuzzaldrinPlus, 'score').and.returnValues(1, 2);
+    fixture.detectChanges();
+    // wait to fetch all responses
+    tick();
+
+    expectSetSearch('object', [mockedResponse.results[1], mockedResponse.results[0]]);
+  }));
+
+  it('should add extra score if occurrence appears on the name / title', fakeAsync(() => {
+    const occurrence = 'looking for this occurence';
+    const mockedResponse = getMockItemsResponseInterface();
+    mockedResponse.results.length = 2;
+    // added a prefix to all object properties to avoid collisions on random object
+    mockedResponse.results[1]['name'] = occurrence;
+    mockedResponse.results[0]['other'] = occurrence;
+    spyOn(mockSwapiFetcherService, 'getAllItems').and.returnValue(of(mockedResponse));
+
+    fixture.detectChanges();
+    // wait to fetch all responses
+    tick();
+
+    expectSetSearch(occurrence, [mockedResponse.results[1], mockedResponse.results[0]]);
   }));
 
   // Return elements as expected from the component
