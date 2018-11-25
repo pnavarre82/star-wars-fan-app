@@ -99,7 +99,7 @@ describe('ListComponent', () => {
     expectCorrectItems(expectedItems);
   }));
 
-  it('should set status loading to StatusComponent during "loading" and "loaded" when completed', fakeAsync(() => {
+  it('should set status "loading" to StatusComponent during load and "loaded" when completed', fakeAsync(() => {
     fixture.detectChanges();
     const statusComponent: MockStatusComponent = fixture.debugElement.query(By.directive(StatusComponent)).componentInstance;
     const responsesLength = mockSwapiFetcherService.returnedResponses.length;
