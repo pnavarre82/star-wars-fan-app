@@ -1,3 +1,16 @@
-<p>
-  detail-view works!
-</p>
+<h1>
+  <app-type [type]="resource"></app-type>: {{name}}
+</h1>
+<main class="mx-auto col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 jumbotron" role="main">
+  <form (ngSubmit)="login()" [ngClass]="{'was-validated': submitted }">
+    <div class="form-group row" *ngFor="let value of values">
+      <label [attr.name]="value.name">{{cleanKey(value.name)}}</label>
+      <ng-container [ngSwitch]="value.type">
+        <input *ngSwitchCase="'string'" type="text" class="form-control" [attr.name]="value.name" [value]="value.value" readonly />
+        <div *ngSwitchCase="'links'">
+          <a class="badge badge-light" *ngFor="let link of value.links; index as i" [attr.name]="value.name+i" [routerLink]="link.relativePath" [attr.routerlink]="link.relativePath">{{link.url}}</a>
+        </div>
+      </ng-container>
+    </div>
+  </form>
+</main>
