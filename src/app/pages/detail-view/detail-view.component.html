@@ -9,7 +9,7 @@
       <ng-container [ngSwitch]="value.type">
         <input *ngSwitchCase="'string'" type="text" class="form-control" [attr.name]="value.name" [value]="value.value" readonly />
         <div *ngSwitchCase="'links'">
-          <a class="badge badge-light" *ngFor="let link of value.links; index as i" [attr.name]="value.name+i" [routerLink]="link.relativePath" [attr.routerlink]="link.relativePath">{{link.url}}</a>
+          <a class="badge badge-light" *ngFor="let link of value.links; index as i" [attr.name]="value.name+i" [routerLink]="link.relativePath" [attr.routerlink]="link.relativePath">{{getNameTitleByUrl(link.relativePath) | async}}</a>
         </div>
       </ng-container>
     </div>

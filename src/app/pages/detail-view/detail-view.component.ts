@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
 import { StatusOptions } from 'src/app/components/status/status.component';
+import { Observable } from 'rxjs';
 
 /**
  * Component which presents detail view
@@ -102,6 +103,10 @@ export class DetailViewComponent implements OnInit {
       .split(' ')
       .map(s => s.charAt(0).toUpperCase() + s.substring(1))
       .join(' ');
+  }
+
+  getNameTitleByUrl(url): Observable<string> {
+    return this.swapiFetcherService.getNameOrTitleByUrl(url);
   }
 }
 

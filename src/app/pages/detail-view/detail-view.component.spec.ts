@@ -5,7 +5,7 @@ import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetche
 import { MockSwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service.spec';
 import { Router } from '@angular/router';
 import * as faker from 'faker';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Observable } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
@@ -116,6 +116,7 @@ describe('DetailViewComponent', () => {
     });
 
     it('should show url as links with path relative', () => {
+      spyOn(mockSwapiFetcherService, 'getNameOrTitleByUrl').and.callFake(fakeGetNameOrTitleByUrl);
       const urlKey: string = faker.random.word();
       const [url, expetedPath] = getFakeUrlAndRelativePath();
       swapiItem[urlKey] = url;
@@ -124,6 +125,7 @@ describe('DetailViewComponent', () => {
     });
 
     it('should show list of urls as multiples links with path relative', () => {
+      spyOn(mockSwapiFetcherService, 'getNameOrTitleByUrl').and.callFake(fakeGetNameOrTitleByUrl);
       const urlKey: string = faker.random.word();
       const linksLength = faker.random.number({ min: 2, max: 5 });
       const expetedPaths: string[] = [];
@@ -192,17 +194,18 @@ describe('DetailViewComponent', () => {
     expect(input).toEqual(null);
   }
 
-  function expectUrlLinkPresent(key: string, url: string, expectedPath: string) {
+  async function expectUrlLinkPresent(key: string, url: string, expectedPath: string) {
     const label: HTMLElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(a)`)).nativeElement;
     expect(label.innerText).toEqual(component.cleanKey(key));
 
     // 0 added beacuse is first item index
     const a: HTMLLinkElement = fixture.debugElement.query(By.css(`a[name="${key}0"]`)).nativeElement;
     expect(a.getAttribute('routerlink')).toEqual(expectedPath);
-    expect(a.innerText).toEqual(url);
+    const fakeGetNameOrTitle: string = await fakeGetNameOrTitleByUrl(expectedPath).toPromise();
+    expect(a.innerText).toEqual(fakeGetNameOrTitle);
   }
 
-  function expectUrlLinkArrayPresent(key: string, urls: string[], expectedPaths: string[]) {
+  async function expectUrlLinkArrayPresent(key: string, urls: string[], expectedPaths: string[]) {
     const label: HTMLElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(a)`)).nativeElement;
     expect(label.innerText).toEqual(component.cleanKey(key));
 
@@ -212,7 +215,8 @@ describe('DetailViewComponent', () => {
 
       const a: HTMLLinkElement = fixture.debugElement.query(By.css(`a[name="${key}${i}"]`)).nativeElement;
       expect(a.getAttribute('routerlink')).toEqual(expectedPath);
-      expect(a.innerText).toEqual(url);
+      const fakeGetNameOrTitle: string = await fakeGetNameOrTitleByUrl(expectedPath).toPromise();
+      expect(a.innerText).toEqual(fakeGetNameOrTitle);
     }
   }
 
@@ -222,5 +226,9 @@ describe('DetailViewComponent', () => {
     const url: string = `${SwapiFetcherService.BaseURL}${urlResource}/${urlId}/`;
     const relativePath: string = `/${urlResource}/${urlId}`;
     return [url, relativePath];
+  }
+
+  function fakeGetNameOrTitleByUrl(url: string): Observable<string> {
+    return of('name of ' + url);
   }
 });
