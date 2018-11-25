@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 import { ItemsResponseInterface } from './models/items-response.interface';
 import { ListResponseInterface } from './models/list-response.interface';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { tap } from 'rxjs/operators';
 
 /**
  * Swapi Fetcher Service
@@ -17,6 +18,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 })
 export class SwapiFetcherService {
   static BaseURL: string = 'https://swapi.co/api/';
+  static ResourcePageRegex: RegExp = /^https:\/\/swapi\.co\/api\/([a-z]+)\/(\d+)\/$/;
   static PageInsert: string = '/?page=';
   static FilmsPath: string = 'films';
   static PeoplePath: string = 'people';
@@ -75,7 +77,10 @@ export class SwapiFetcherService {
         (jsonSwapiResult: ListResponseInterface) => {
           // set result from SWAPI into cache
           this.localStorageService.setItem(url, jsonSwapiResult);
-
+          jsonSwapiResult.results.forEach(jsonSwapiItem => {
+            // set each item returned from SWAPI into cache
+            this.localStorageService.setItem(jsonSwapiItem.url, jsonSwapiItem);
+          });
           this.proccessResponse(returnedObserver, resource, jsonSwapiResult, unFinishedResources);
         },
         // process errors from swapi api
@@ -124,5 +129,27 @@ export class SwapiFetcherService {
         returnedObserver.complete();
       }
     }
+  }
+
+  getItem(resourcePath: string): Observable<any> {
+    let result: Observable<any>;
+
+    // removes extra "/"
+    resourcePath = resourcePath.substr(1);
+    const url: string = `${SwapiFetcherService.BaseURL}${resourcePath}/`;
+
+    const cacheResult: ListResponseInterface = this.localStorageService.getItem(url);
+    if (cacheResult) {
+      result = of(cacheResult);
+    } else {
+      result = this.httpClient.get(url).pipe(
+        tap(jsonSwapiItem => {
+          // set result from SWAPI into cache
+          this.localStorageService.setItem(url, jsonSwapiItem);
+        })
+      );
+    }
+
+    return result;
   }
 }

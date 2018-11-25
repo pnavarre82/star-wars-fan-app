@@ -10,7 +10,6 @@ import { Observable, of, concat } from 'rxjs';
 import { delay, mapTo } from 'rxjs/operators';
 import { getMockItemsResponseInterface } from './models/items-response.interface.spec';
 import * as faker from 'faker';
-import { andObservables } from '@angular/router/src/utils/collection';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { MockLocalStorageService } from '../local-storage/local-storage.service.spec';
 
@@ -39,113 +38,202 @@ describe('SwapiFetcherService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should getAllItems iterate over all pages from swapi', done => {
-    const receivedItems: any[] = [];
-    const expectedItems: any[] = [];
+  describe('getAllItems', () => {
+    it('should getAllItems iterate over all pages from swapi', done => {
+      const receivedItems: any[] = [];
+      const expectedItems: any[] = [];
 
-    service.getAllItems().subscribe(
-      // next
-      (itemsResponse: ItemsResponseInterface) => {
-        receivedItems.push(...itemsResponse.results);
-      },
-      // error
-      () => {},
-      // completed
-      () => {
-        httpTestingController.verify();
-        expect(receivedItems).toEqual(expectedItems);
-        done();
-      }
-    );
-
-    SwapiFetcherService.Resources.forEach(resource => {
-      addExpectedReq(resource, expectedItems, 1, true);
-    });
-
-    // add second page once for any resource
-    SwapiFetcherService.Resources.forEach(resource => {
-      addExpectedReq(resource, expectedItems, 2);
-    });
-  });
-
-  it('should getAllItems return error if any request return erro from swapi', done => {
-    service.getAllItems().subscribe(
-      // next
-      () => {},
-      // error
-      () => {
-        done();
-      }
-    );
-
-    mockRequest(getUrl(SwapiFetcherService.FilmsPath, 1), 'Error received', {
-      type: 'ERROR',
-      statusText: 'Mock error',
-      status: 404
-    });
-  });
-
-  it('should try to grab data from LocalStorageService  it exists and don‘t request', done => {
-    const receivedItems: any[] = [];
-    const expectedItems: any[] = [];
-
-    // Cache has to be added before the requests would be done
-    SwapiFetcherService.Resources.forEach(resource => {
-      addExpectedReqFromLocalStorage(resource, expectedItems, 1);
-    });
-
-    service.getAllItems().subscribe(
-      // next
-      (itemsResponse: ItemsResponseInterface) => {
-        receivedItems.push(...itemsResponse.results);
-      },
-      // error
-      () => {},
-      // completed
-      () => {
-        httpTestingController.verify();
-        expect(receivedItems).toEqual(expectedItems);
-        done();
-      }
-    );
-  });
-
-  it('should set fetched data from SWAPI to LocalStorageService', done => {
-    const expectedItems: any[] = [];
-    const requestsWithResult: { [key: string]: any } = {};
-    spyOn(mockLocalStorageService, 'setItem');
-
-    service.getAllItems().subscribe(
-      // next
-      () => {},
-      // error
-      () => {},
-      // completed
-      () => {
-        for (const url in requestsWithResult) {
-          if (requestsWithResult.hasOwnProperty(url)) {
-            const result = requestsWithResult[url];
-            expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(url, result);
-          }
+      service.getAllItems().subscribe(
+        // next
+        (itemsResponse: ItemsResponseInterface) => {
+          receivedItems.push(...itemsResponse.results);
+        },
+        // error
+        () => {},
+        // completed
+        () => {
+          httpTestingController.verify();
+          expect(receivedItems).toEqual(expectedItems);
+          done();
         }
-        done();
-      }
-    );
+      );
 
-    SwapiFetcherService.Resources.forEach(resource => {
-      const resultResource = addExpectedReq(resource, expectedItems, 1);
-      const url = getUrl(resource, 1);
-      requestsWithResult[url] = resultResource;
+      SwapiFetcherService.Resources.forEach(resource => {
+        addExpectedGetAllItemsReq(resource, expectedItems, 1, true);
+      });
+
+      // add second page once for any resource
+      SwapiFetcherService.Resources.forEach(resource => {
+        addExpectedGetAllItemsReq(resource, expectedItems, 2);
+      });
+    });
+
+    it('should getAllItems return error if any request return erro from swapi', done => {
+      service.getAllItems().subscribe(
+        // next
+        () => {},
+        // error
+        () => {
+          done();
+        }
+      );
+
+      mockRequest(getUrlGetAllItems(SwapiFetcherService.FilmsPath, 1), 'Error received', {
+        type: 'ERROR',
+        statusText: 'Mock error',
+        status: 404
+      });
+    });
+
+    it('should try to grab data from LocalStorageService  it exists and don‘t request', done => {
+      const receivedItems: any[] = [];
+      const expectedItems: any[] = [];
+
+      // Cache has to be added before the requests would be done
+      SwapiFetcherService.Resources.forEach(resource => {
+        addExpectedReqFromLocalStorage(resource, expectedItems, 1);
+      });
+
+      service.getAllItems().subscribe(
+        // next
+        (itemsResponse: ItemsResponseInterface) => {
+          receivedItems.push(...itemsResponse.results);
+        },
+        // error
+        () => {},
+        // completed
+        () => {
+          httpTestingController.verify();
+          expect(receivedItems).toEqual(expectedItems);
+          done();
+        }
+      );
+    });
+
+    it('should set fetched data from SWAPI to LocalStorageService', done => {
+      const expectedItems: any[] = [];
+      const requestsWithResult: { [key: string]: any } = {};
+      spyOn(mockLocalStorageService, 'setItem');
+
+      service.getAllItems().subscribe(
+        // next
+        () => {},
+        // error
+        () => {},
+        // completed
+        () => {
+          for (const url in requestsWithResult) {
+            if (requestsWithResult.hasOwnProperty(url)) {
+              const result = requestsWithResult[url];
+              expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(url, result);
+            }
+          }
+          done();
+        }
+      );
+
+      SwapiFetcherService.Resources.forEach(resource => {
+        const resultResource = addExpectedGetAllItemsReq(resource, expectedItems, 1);
+        const url = getUrlGetAllItems(resource, 1);
+        requestsWithResult[url] = resultResource;
+      });
+    });
+
+    it('should set every result fetched data from SWAPI to LocalStorageService for getItem', done => {
+      const expectedItems: any[] = [];
+      const requestsWithResult: { [key: string]: any } = {};
+      spyOn(mockLocalStorageService, 'setItem');
+
+      service.getAllItems().subscribe(
+        // next
+        () => {},
+        // error
+        () => {},
+        // completed
+        () => {
+          for (const url in requestsWithResult) {
+            if (requestsWithResult.hasOwnProperty(url)) {
+              const result = requestsWithResult[url];
+              expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(url, result);
+            }
+          }
+          done();
+        }
+      );
+
+      SwapiFetcherService.Resources.forEach(resource => {
+        const resultResource = addExpectedGetAllItemsReq(resource, expectedItems, 1);
+        resultResource.results.forEach(result => {
+          requestsWithResult[result.url] = result;
+        });
+      });
     });
   });
 
-  function addExpectedReq(
+  describe('getItem', () => {
+    let passedUrlPath: string;
+    let requestedUrlPath: string;
+    let item: any;
+    beforeEach(() => {
+      const resource = faker.random.arrayElement(SwapiFetcherService.Resources);
+      const id = faker.random.number().toString();
+
+      passedUrlPath = `/${resource}/${id}`;
+      requestedUrlPath = `${resource}/${id}/`;
+      item = faker.helpers.createCard();
+    });
+
+    it('should getItem request object from swapi', done => {
+      service.getItem(passedUrlPath).subscribe(
+        // next
+        result => {
+          httpTestingController.verify();
+          expect(result).toEqual(item);
+          done();
+        }
+      );
+
+      mockRequest(getUrlGetItem(requestedUrlPath), item);
+    });
+
+    it('should set fetched data from SWAPI to LocalStorageService', done => {
+      spyOn(mockLocalStorageService, 'setItem');
+
+      const url: string = getUrlGetItem(requestedUrlPath);
+
+      service.getItem(passedUrlPath).subscribe(
+        // next
+        result => {
+          expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(url, result);
+          done();
+        }
+      );
+
+      mockRequest(url, item);
+    });
+
+    it('should try to grab data from LocalStorageService  it exists and don‘t request', done => {
+      const url: string = getUrlGetItem(requestedUrlPath);
+      mockLocalStorageService.setItem(url, item);
+
+      service.getItem(passedUrlPath).subscribe(
+        // next
+        result => {
+          httpTestingController.verify();
+          expect(result).toEqual(item);
+          done();
+        }
+      );
+    });
+  });
+
+  function addExpectedGetAllItemsReq(
     relativePath: string,
     expectedItems: any[],
     currentPage: number,
     morePages: boolean = false
   ): ListResponseInterface {
-    const url = getUrl(relativePath, currentPage);
+    const url = getUrlGetAllItems(relativePath, currentPage);
     const nextPage: number = morePages ? currentPage + 1 : null;
 
     const result = nextPage !== null ? getFakeResultWithExpectedNextPage(relativePath, nextPage) : getFakeResultWithEmptyNexPage();
@@ -155,10 +243,14 @@ describe('SwapiFetcherService', () => {
     return result;
   }
 
-  function getUrl(relativePath: string, currentPage: number): string {
+  function getUrlGetAllItems(relativePath: string, currentPage: number): string {
     return currentPage === 1
       ? `${SwapiFetcherService.BaseURL}${relativePath}`
       : `${SwapiFetcherService.BaseURL}${relativePath}${SwapiFetcherService.PageInsert}${currentPage}`;
+  }
+
+  function getUrlGetItem(relativePath: string): string {
+    return `${SwapiFetcherService.BaseURL}${relativePath}`;
   }
 
   function getFakeResultWithExpectedNextPage(relativePath: string, pageNumber: number): ListResponseInterface {
@@ -185,7 +277,7 @@ describe('SwapiFetcherService', () => {
     currentPage: number,
     morePages: boolean = false
   ): void {
-    const url = getUrl(relativePath, currentPage);
+    const url = getUrlGetAllItems(relativePath, currentPage);
     const nextPage: number = morePages ? currentPage + 1 : null;
 
     const result = nextPage !== null ? getFakeResultWithExpectedNextPage(relativePath, nextPage) : getFakeResultWithEmptyNexPage();
@@ -232,5 +324,9 @@ export class MockSwapiFetcherService {
       delay(MockSwapiFetcherService.DelayMs),
       mapTo(returnedResponse)
     );
+  }
+
+  getItem(resourcePath: string): Observable<any> {
+    return of(null);
   }
 }
