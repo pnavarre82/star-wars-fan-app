@@ -64,8 +64,8 @@
         <target>Login</target>
       </trans-unit>
       <trans-unit id="loadingIntro" datatype="html">
-        <source>There is random timer (4'-6') to simulate the delay introduced by the auth service</source>
-        <target>There is random timer (4'-6') to simulate the delay introduced by the auth service</target>
+        <source>There is random timer (4"-6") to simulate the delay introduced by the auth service</source>
+        <target>There is random timer (4"-6") to simulate the delay introduced by the auth service</target>
       </trans-unit>
 
       <trans-unit id="tableTypeTitle" datatype="html">
