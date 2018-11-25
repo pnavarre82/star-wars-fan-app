@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
 import { StatusOptions } from 'src/app/components/status/status.component';
 import { Observable } from 'rxjs';
+import { RoutesPaths } from 'src/app/app-routing-paths.class';
 
 /**
  * Component which presents detail view
@@ -18,6 +19,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./detail-view.component.scss']
 })
 export class DetailViewComponent implements OnInit {
+  RoutesPaths = RoutesPaths; // exposed to view
   status: StatusOptions = 'loading';
   resource: string;
   name: string;

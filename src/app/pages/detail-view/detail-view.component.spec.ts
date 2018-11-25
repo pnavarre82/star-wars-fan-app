@@ -3,21 +3,24 @@ import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core
 import { DetailViewComponent } from './detail-view.component';
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
 import { MockSwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service.spec';
-import { Router } from '@angular/router';
+import { Router, RouterLinkWithHref } from '@angular/router';
 import * as faker from 'faker';
 import { of, throwError, Observable } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { MockTypeComponent } from 'src/app/components/type/type.component.spec';
-import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { MockStatusComponent } from 'src/app/components/status/status.component.spec';
 import { delay } from 'rxjs/operators';
 import { StatusComponent } from 'src/app/components/status/status.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { RoutesPaths } from 'src/app/app-routing-paths.class';
 
 describe('DetailViewComponent', () => {
   class MockRouterService {
     get url(): string {
       return null;
     }
+    navigate() {}
   }
 
   let component: DetailViewComponent;
@@ -30,18 +33,14 @@ describe('DetailViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [DetailViewComponent, MockTypeComponent, MockStatusComponent],
       providers: [
         {
           provide: SwapiFetcherService,
           useClass: MockSwapiFetcherService
-        },
-        {
-          provide: Router,
-          useClass: MockRouterService
         }
-      ],
-      schemas: [NO_ERRORS_SCHEMA] // disabled errors from link routes which won't be tested
+      ]
     }).compileComponents();
   }));
 
@@ -131,7 +130,7 @@ describe('DetailViewComponent', () => {
       const [url, expetedPath] = getFakeUrlAndRelativePath();
       swapiItem[urlKey] = url;
       fixture.detectChanges();
-      expectUrlLinkPresent(urlKey, url, expetedPath);
+      expectUrlLinkArrayPresent(urlKey, [expetedPath]);
     });
 
     it('should show list of urls as multiples links with path relative', () => {
@@ -147,13 +146,23 @@ describe('DetailViewComponent', () => {
       }
       swapiItem[urlKey] = urls;
       fixture.detectChanges();
-      expectUrlLinkArrayPresent(urlKey, urls, expetedPaths);
+      expectUrlLinkArrayPresent(urlKey, expetedPaths);
     });
 
     it('should contains cleanKeys returning expected results', () => {
       const sampleKey = 'sample_key';
       const resultKey = component.cleanKey(sampleKey);
       expect(resultKey).toEqual('Sample Key');
+    });
+
+    it('should contains a link  SwapiFetcherService getItem with url', done => {
+      fixture.detectChanges();
+      const debugElements = fixture.debugElement.queryAll(By.directive(RouterLinkWithHref));
+      const index = debugElements.findIndex(debugElement => {
+        return debugElement.properties['href'] === '/' + RoutesPaths.List;
+      });
+      expect(index).toBeGreaterThan(-1);
+      done();
     });
   });
 
@@ -213,27 +222,15 @@ describe('DetailViewComponent', () => {
     expect(input).toEqual(null);
   }
 
-  async function expectUrlLinkPresent(key: string, url: string, expectedPath: string) {
+  async function expectUrlLinkArrayPresent(key: string, expectedPaths: string[]) {
     const label: HTMLElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(a)`)).nativeElement;
     expect(label.innerText).toEqual(component.cleanKey(key));
 
-    // 0 added beacuse is first item index
-    const a: HTMLLinkElement = fixture.debugElement.query(By.css(`a[name="${key}0"]`)).nativeElement;
-    expect(a.getAttribute('routerlink')).toEqual(expectedPath);
-    const fakeGetNameOrTitle: string = await fakeGetNameOrTitleByUrl(expectedPath).toPromise();
-    expect(a.innerText).toEqual(fakeGetNameOrTitle);
-  }
-
-  async function expectUrlLinkArrayPresent(key: string, urls: string[], expectedPaths: string[]) {
-    const label: HTMLElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(a)`)).nativeElement;
-    expect(label.innerText).toEqual(component.cleanKey(key));
-
-    for (let i = 0; i < urls.length; i++) {
-      const url = urls[i];
+    for (let i = 0; i < expectedPaths.length; i++) {
       const expectedPath = expectedPaths[i];
 
       const a: HTMLLinkElement = fixture.debugElement.query(By.css(`a[name="${key}${i}"]`)).nativeElement;
-      expect(a.getAttribute('routerlink')).toEqual(expectedPath);
+      expect(a.getAttribute('href')).toEqual(expectedPath);
       const fakeGetNameOrTitle: string = await fakeGetNameOrTitleByUrl(expectedPath).toPromise();
       expect(a.innerText).toEqual(fakeGetNameOrTitle);
     }

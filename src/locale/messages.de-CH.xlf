@@ -110,6 +110,11 @@
         <source>- Show all -</source>
         <target>- Show all -</target>
       </trans-unit>
+
+      <trans-unit id="backToList" datatype="html">
+        <source>Back to list</source>
+        <target>Back to list</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -2,6 +2,7 @@
 <h1>
   <app-type [type]="resource"></app-type>: {{name}}
 </h1>
+<a [routerLink]="['/',RoutesPaths.List]" i18n="@@backToList">Back to list</a>
 <main class="mx-auto jumbotron" role="main">
   <form (ngSubmit)="login()" [ngClass]="{'was-validated': submitted }">
     <div class="form-group" *ngFor="let value of values">
@@ -10,7 +11,7 @@
         <input *ngSwitchCase="'string'" type="text" class="form-control" [attr.name]="value.name" [value]="value.value" readonly />
         <textarea *ngSwitchCase="'long_string'" type="text" class="form-control" [attr.name]="value.name" readonly>{{value.value}}</textarea>
         <div *ngSwitchCase="'links'">
-          <a class="card-link" *ngFor="let link of value.links; index as i" [attr.name]="value.name+i" [routerLink]="link.relativePath" [attr.routerlink]="link.relativePath">{{getNameTitleByUrl(link.relativePath) | async}}</a>
+          <a class="card-link" *ngFor="let link of value.links; index as i" [attr.name]="value.name+i" [routerLink]="link.relativePath">{{getNameTitleByUrl(link.relativePath) | async}}</a>
         </div>
       </ng-container>
     </div>
