@@ -9,9 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { TypeComponent } from './components/type/type.component';
 import { DetailViewComponent } from './pages/detail-view/detail-view.component';
+import { StatusComponent } from './components/status/status.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, ListComponent, TypeComponent, DetailViewComponent],
+  declarations: [AppComponent, LoginComponent, ListComponent, TypeComponent, DetailViewComponent, StatusComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

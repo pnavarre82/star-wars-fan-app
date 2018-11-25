@@ -13,6 +13,8 @@ import { of, throwError } from 'rxjs';
 import { getMockItemsResponseInterface } from 'src/app/services/swapi-fetcher/models/items-response.interface.spec';
 import * as fuzzaldrinPlus from 'fuzzaldrin-plus';
 import { Router } from '@angular/router';
+import { MockStatusComponent } from 'src/app/components/status/status.component.spec';
+import { StatusComponent } from 'src/app/components/status/status.component';
 
 describe('ListComponent', () => {
   class MockRouterService {
@@ -25,7 +27,7 @@ describe('ListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ListComponent, MockTypeComponent],
+      declarations: [ListComponent, MockTypeComponent, MockStatusComponent],
       providers: [
         {
           provide: SwapiFetcherService,
@@ -97,18 +99,17 @@ describe('ListComponent', () => {
     expectCorrectItems(expectedItems);
   }));
 
-  it('should show loading icon during loading and loaded icon when completed', fakeAsync(() => {
+  it('should set status loading to StatusComponent during "loading" and "loaded" when completed', fakeAsync(() => {
     fixture.detectChanges();
+    const statusComponent: MockStatusComponent = fixture.debugElement.query(By.directive(StatusComponent)).componentInstance;
     const responsesLength = mockSwapiFetcherService.returnedResponses.length;
     for (let i = 0; i < responsesLength; i++) {
-      const loadingIcon = fixture.debugElement.query(By.css('.loading'));
-      expect(loadingIcon).not.toBeNull();
+      expect(statusComponent.status).toEqual('loading');
       // make next object appear in the subscription
       tick(MockSwapiFetcherService.DelayMs);
       fixture.detectChanges();
     }
-    const loadedIcon = fixture.debugElement.query(By.css('.loaded'));
-    expect(loadedIcon).not.toBeNull();
+    expect(statusComponent.status).toEqual('loaded');
   }));
 
   it('should show error icon if get getAllItems send any loading-error', fakeAsync(() => {
@@ -116,8 +117,8 @@ describe('ListComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const loadingErrorIcon = fixture.debugElement.query(By.css('.loading-error'));
-    expect(loadingErrorIcon).not.toBeNull();
+    const statusComponent: MockStatusComponent = fixture.debugElement.query(By.directive(StatusComponent)).componentInstance;
+    expect(statusComponent.status).toEqual('loading-error');
   }));
 
   // iterate over every tbody tr in the component and test name and type from expectedPresentedItems

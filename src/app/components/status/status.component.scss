@@ -1,0 +1,70 @@
+.status-icon {
+  position: fixed;
+  right: 20px;
+  top: 0;
+}
+
+$swYellow: #ffd700;
+.loading {
+  // extracted from https://loading.io/css/
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  &.loading:after {
+    content: ' ';
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid $swYellow;
+    border-color: $swYellow transparent $swYellow transparent;
+    animation: loading 1.2s linear infinite;
+  }
+  @keyframes loading {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// extracted from http://www.karimnassar.com/code/web/css-icons/
+.loading-error {
+  display: inline-block;
+  top: 0.225em;
+  width: 1.15em;
+  height: 1.15em;
+  overflow: hidden;
+  border: none;
+  background-color: transparent;
+  border-radius: 0.625em;
+  &::before {
+    content: '';
+    display: block;
+    top: -0.08em;
+    left: 0em;
+    position: absolute;
+    border: transparent 0.6em solid;
+    border-bottom-color: #fd3;
+    border-bottom-width: 1em;
+    border-top-width: 0;
+    box-shadow: #999 0 1px 1px;
+  }
+  &::after {
+    display: block;
+    position: absolute;
+    top: 0.3em;
+    left: 0;
+    width: 100%;
+    padding: 0 1px;
+    text-align: center;
+    font-family: 'Garamond';
+    content: '!';
+    font-size: 0.65em;
+    font-weight: bold;
+    color: #333;
+  }
+}
