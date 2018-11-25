@@ -17,8 +17,8 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 export class AuthService {
   static Username: string = 'star';
   static Password: string = 'wars';
-  static MinTimeMs: number = 400;
-  static MaxTimeMs: number = 600;
+  static MinTimeMs: number = 4000;
+  static MaxTimeMs: number = 6000;
   static LocalStorageKey: string = 'AuthServiceIsLoggedKey';
 
   constructor(private localStorageService: LocalStorageService) {}
