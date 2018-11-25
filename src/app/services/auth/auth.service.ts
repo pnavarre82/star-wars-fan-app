@@ -3,6 +3,7 @@ import { LoginModel } from './models/login.model';
 import { Observable, of } from 'rxjs';
 import { LoginResponseEnum } from './enums/login-response.enum';
 import { delay } from 'rxjs/operators';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 /**
  * Authentication Service
@@ -18,10 +19,9 @@ export class AuthService {
   static Password: string = 'wars';
   static MinTimeMs: number = 400;
   static MaxTimeMs: number = 600;
-  // in futher features will be stored in localStorageService
-  private static isLogged: boolean = false;
+  static LocalStorageKey: string = 'AuthServiceIsLoggedKey';
 
-  constructor() {}
+  constructor(private localStorageService: LocalStorageService) {}
   /**
    * should consume from auth, mocked response instead
    * @param loginModel Data from the login form
@@ -29,23 +29,18 @@ export class AuthService {
   login(loginModel: LoginModel): Observable<LoginResponseEnum> {
     // time to simulate API access delay
     // between MinTimeMs and MaxTimeMs (4000 - 6000) ms
-    const delayTimeMs =
-      Math.floor(
-        Math.random() * (AuthService.MaxTimeMs - AuthService.MinTimeMs)
-      ) + AuthService.MinTimeMs;
+    const delayTimeMs = Math.floor(Math.random() * (AuthService.MaxTimeMs - AuthService.MinTimeMs)) + AuthService.MinTimeMs;
 
-    AuthService.isLogged =
-      loginModel &&
-      loginModel.userName === AuthService.Username &&
-      loginModel.password === AuthService.Password;
+    const isLogged = loginModel && loginModel.userName === AuthService.Username && loginModel.password === AuthService.Password;
+    this.localStorageService.setItem(AuthService.LocalStorageKey, isLogged);
 
-    return AuthService.isLogged
-      ? of(LoginResponseEnum.OK).pipe(delay(delayTimeMs))
-      : of(LoginResponseEnum.WrongUserPass).pipe(delay(delayTimeMs));
+    return isLogged ? of(LoginResponseEnum.OK).pipe(delay(delayTimeMs)) : of(LoginResponseEnum.WrongUserPass).pipe(delay(delayTimeMs));
   }
 
   // observable because should be returned from server
   isLogged(): Observable<boolean> {
-    return of(AuthService.isLogged);
+    const stored = this.localStorageService.getItem(AuthService.LocalStorageKey);
+    const isLogged = stored !== null ? stored : false;
+    return of(isLogged);
   }
 }
