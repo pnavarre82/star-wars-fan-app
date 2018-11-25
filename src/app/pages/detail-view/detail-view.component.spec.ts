@@ -108,6 +108,16 @@ describe('DetailViewComponent', () => {
       }
     });
 
+    it('should show strings with new lines in textarea', () => {
+      const key: string = faker.lorem.word();
+      const paragraphs: string = faker.lorem.paragraphs();
+      swapiItem[key] = paragraphs;
+
+      fixture.detectChanges();
+      expectKeyAndValueTextareaPresent(key, paragraphs);
+      fixture.detectChanges();
+    });
+
     it('shouldn‘t show underscored properties of the swapiItem', () => {
       const underscoredProperty: string = '_' + faker.random.word();
       swapiItem[underscoredProperty] = faker.random.word();
@@ -186,6 +196,15 @@ describe('DetailViewComponent', () => {
     expect(input.value).toEqual(expectedValue);
   }
 
+  function expectKeyAndValueTextareaPresent(key: string, value: any) {
+    const label: HTMLElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(textarea)`)).nativeElement;
+    expect(label.innerText).toEqual(component.cleanKey(key));
+
+    const textarea: HTMLTextAreaElement = fixture.debugElement.query(By.css(`textarea[name="${key}"]`)).nativeElement;
+    const expectedValue: string = value;
+    // Textarea replace \r with \n
+    expect(textarea.value).toEqual(expectedValue.replace(/\r/g, '\n'));
+  }
   function expectKeyAndValueNotPresent(key: string) {
     const label: DebugElement = fixture.debugElement.query(By.css(`[name="${key}"]:not(input)`));
     expect(label).toEqual(null);

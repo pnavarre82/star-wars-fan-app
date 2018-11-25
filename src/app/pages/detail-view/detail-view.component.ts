@@ -61,7 +61,8 @@ export class DetailViewComponent implements OnInit {
     if (execResult) {
       value = [stringValue];
     }
-    const type: 'links' | 'string' = Array.isArray(value) ? 'links' : 'string';
+    const type: fieldType = Array.isArray(value) ? 'links' : stringValue.indexOf('\n') >= 0 ? 'long_string' : 'string';
+
     let links: {
       relativePath: string;
       url: string;
@@ -110,10 +111,11 @@ export class DetailViewComponent implements OnInit {
   }
 }
 
+type fieldType = 'string' | 'long_string' | 'links';
 interface ValueInterface {
   name: string;
   value: string;
-  type: 'string' | 'links';
+  type: fieldType;
   links?: {
     relativePath: string;
     url: string;

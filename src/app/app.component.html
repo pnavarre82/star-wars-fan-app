@@ -1,11 +1,10 @@
-<header
-  class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
-  <span class="mx-auto" 
-        i18n="@@appName">Star Wars Fan App</span>
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
+  <span class="mx-auto" i18n="@@appName">Star Wars Fan App</span>
 </header>
-<router-outlet class="container"></router-outlet>
-<footer>
-  <span class="mx-auto" 
-        i18n="@@challengeFooter">Web-App Developer Challenge</span>&nbsp;
+<div class="flex-grow-1">
+  <router-outlet class=""></router-outlet>
+</div>
+<footer class="footer">
+  <span class=" mx-auto" i18n="@@challengeFooter">Web-App Developer Challenge</span>&nbsp;
   <small i18n="@@developerName">Designed and built by Pedro Andres</small>
 </footer>
