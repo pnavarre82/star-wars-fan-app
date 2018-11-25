@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { AuthService } from './authservice.service';
+import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
 import { LoginModel } from './models/login.model';
 import { Observable, of } from 'rxjs';

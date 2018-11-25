@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth/authservice.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { LoginResponseEnum } from 'src/app/services/auth/enums/login-response.enum';
 import { Router } from '@angular/router';
 import { RoutesPaths } from 'src/app/app-routing-paths.class';

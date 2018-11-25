@@ -1,8 +1,8 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 
 import { AuthGuard } from './auth.guard';
-import { AuthService } from '../services/auth/authservice.service';
-import { MockAuthService } from '../services/auth/authservice.service.spec';
+import { AuthService } from '../services/auth/auth.service';
+import { MockAuthService } from '../services/auth/auth.service.spec';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { RoutesPaths } from '../app-routing-paths.class';
