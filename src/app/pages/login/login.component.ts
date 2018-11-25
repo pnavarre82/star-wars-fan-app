@@ -38,7 +38,8 @@ export class LoginComponent implements OnInit {
 
   login(): void {
     this.submitted = true;
-    if (this.passwordControl.valid && this.usernameControl.valid) {
+    // loading prevents double submiting
+    if (this.passwordControl.valid && this.usernameControl.valid && !this.loading) {
       this.loading = true;
       this.authService
         .login({

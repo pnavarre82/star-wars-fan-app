@@ -173,6 +173,19 @@ describe('LoginComponent', () => {
     }
   ));
 
+  it('should prevent double submit', fakeAsync(
+    inject([AuthService], (mockAuthService: MockAuthService) => {
+      const delayTime = faker.random.number({ min: 4000, max: 10000 });
+      spyOn(mockAuthService, 'login').and.returnValue(of(LoginResponseEnum.OK).pipe(delay(delayTime)));
+      setLoginValues();
+      submit();
+      submit();
+
+      tick(delayTime);
+      expect(mockAuthService.login).toHaveBeenCalledTimes(1);
+    })
+  ));
+
   function submit() {
     const buttonSubmit = fixture.debugElement.query(By.css('button[type=submit]'));
     buttonSubmit.nativeElement.click();
