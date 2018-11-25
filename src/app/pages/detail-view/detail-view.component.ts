@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetcher.service';
+import { StatusOptions } from 'src/app/components/status/status.component';
 
 /**
  * Component which presents detail view
@@ -16,6 +17,7 @@ import { SwapiFetcherService } from 'src/app/services/swapi-fetcher/swapi-fetche
   styleUrls: ['./detail-view.component.scss']
 })
 export class DetailViewComponent implements OnInit {
+  status: StatusOptions = 'loading';
   resource: string;
   name: string;
   values: ValueInterface[] = [];
@@ -28,15 +30,22 @@ export class DetailViewComponent implements OnInit {
     // url looks like /resource/id -> ['', 'resource', 'id]
     this.resource = url.split('/')[1];
 
-    this.swapiFetcherService.getItem(url).subscribe(item => {
-      this.name = item.name || item.title;
-      for (const key in item) {
-        if (item.hasOwnProperty(key) && key[0] !== '_') {
-          const value = item[key];
-          this.values.push(this.getValue(key, value));
+    this.swapiFetcherService.getItem(url).subscribe(
+      item => {
+        this.status = 'loaded';
+        this.name = item.name || item.title;
+        for (const key in item) {
+          if (item.hasOwnProperty(key) && key[0] !== '_') {
+            const value = item[key];
+            this.values.push(this.getValue(key, value));
+          }
         }
+      },
+      // error handling
+      () => {
+        this.status = 'loading-error';
       }
-    });
+    );
   }
 
   /**
