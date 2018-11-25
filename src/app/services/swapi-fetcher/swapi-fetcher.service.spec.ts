@@ -227,6 +227,45 @@ describe('SwapiFetcherService', () => {
     });
   });
 
+  describe('getNameOrTitleByUrl', () => {
+    let passedUrlPath: string;
+    let item: any;
+    beforeEach(() => {
+      const resource = faker.random.arrayElement(SwapiFetcherService.Resources);
+      const id = faker.random.number().toString();
+
+      passedUrlPath = `/${resource}/${id}`;
+      item = faker.helpers.createCard();
+    });
+
+    it('should getNameOrTitleByUrl return name from getItem', done => {
+      const fakeName = faker.internet.userName();
+      item.name = fakeName;
+      spyOn(service, 'getItem').and.returnValue(of(item));
+      service.getNameOrTitleByUrl(passedUrlPath).subscribe(
+        // next
+        result => {
+          expect(result).toEqual(fakeName);
+          done();
+        }
+      );
+    });
+
+    it('should getNameOrTitleByUrl return title from getItem if name not present', done => {
+      const fakeTitle = faker.internet.userName();
+      item.title = fakeTitle;
+      delete item.name;
+      spyOn(service, 'getItem').and.returnValue(of(item));
+      service.getNameOrTitleByUrl(passedUrlPath).subscribe(
+        // next
+        result => {
+          expect(result).toEqual(fakeTitle);
+          done();
+        }
+      );
+    });
+  });
+
   function addExpectedGetAllItemsReq(
     relativePath: string,
     expectedItems: any[],
@@ -327,6 +366,10 @@ export class MockSwapiFetcherService {
   }
 
   getItem(resourcePath: string): Observable<any> {
+    return of(null);
+  }
+
+  getNameOrTitleByUrl(resourcePath: string): Observable<string> {
     return of(null);
   }
 }

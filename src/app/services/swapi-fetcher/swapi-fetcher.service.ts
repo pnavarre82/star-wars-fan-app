@@ -4,7 +4,7 @@ import { Observable, Observer, of } from 'rxjs';
 import { ItemsResponseInterface } from './models/items-response.interface';
 import { ListResponseInterface } from './models/list-response.interface';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 /**
  * Swapi Fetcher Service
@@ -151,5 +151,9 @@ export class SwapiFetcherService {
     }
 
     return result;
+  }
+
+  getNameOrTitleByUrl(resourcePath: string): Observable<any> {
+    return this.getItem(resourcePath).pipe(map(jsonSwapiItem => jsonSwapiItem.name || jsonSwapiItem.title));
   }
 }
